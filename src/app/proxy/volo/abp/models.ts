@@ -1,3 +1,3 @@
 
-export interface AbpException extends any {
+export interface AbpException  {
 }
