@@ -2,6 +2,7 @@ import { PagedAndSortedResultRequestDto } from '@abp/ng.core';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { CategoriesService, CategoryDto } from '@proxy/categories';
 
 import { ProductDto, ProductsService } from '@proxy/products';
 
@@ -16,19 +17,25 @@ export class ListProductsComponent implements OnInit {
 products : ProductDto[] = [];
 input: PagedAndSortedResultRequestDto = { maxResultCount: 10, skipCount: 0 };
 searchForm: FormGroup;
-
-  constructor(private productsService: ProductsService, private router:Router
-              ,private formBuilder:FormBuilder
+categories: CategoryDto[] = [];
+  constructor(private productsService: ProductsService,
+             private router:Router,
+             private formBuilder:FormBuilder,
+             private categoriesService: CategoriesService
   ) {
     this.buildForm();
   }
 
   ngOnInit(): void {
+    this.categoriesService.getList({maxResultCount:100, skipCount:0}).subscribe((response) => {
+      this.categories = response.items;
+    });
     this.searchProducts();
   }
   buildForm() {
     this.searchForm = this.formBuilder.group({
       filter: new FormControl(''),
+      categoryId: new FormControl(null),
     });
   }
   addProduct() {
